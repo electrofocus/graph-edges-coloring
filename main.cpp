@@ -1,53 +1,44 @@
 #include <iostream>
 #include <utility>
 #include <vector>
-#include <fstream>
 #include <set>
+#include <ctime>
 
 using namespace std;
 
 
 class Solver {
-    vector< vector<int> > graph;
+private:
+    vector<vector<int>> graph;
     int steps;
-    int size;
-    int max_degree;
+    set<int> default_colors;
 
 public:
-    explicit Solver(vector< vector<int> > g, int clrs_num): graph(move(g)), steps(0), size(g.size()) {
-        max_degree = 0;
+    explicit Solver(vector<vector<int>> g, int colors_num) {
+        graph = g;
+        steps = 0;
 
-        for (int i = 0; i < size; i++) {
-            int k = 0;
-            for (int j = 0; j < size; j++) {
-                if (graph[i][j] != 0) {
-                    k++;
-                }
-            }
-            if (k > max_degree) {
-                max_degree = k;
-            }
+        for (int i = 2; i < colors_num + 2; i++) {
+            default_colors.insert(i);
         }
-
-        max_degree++;
     }
 
-    vector< vector<int> > solve() {
-        set<int> colors;
-        for (int i = 2; i < max_degree + 2; i++) {
-            colors.insert(i);
-        }
-
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                set<int> clrs = colors;
+    vector<vector<int>> solve() {
+        for (int i = 0; i < graph.size(); i++) {
+            for (int j = 0; j < graph.size(); j++) {
                 if (graph[i][j] == 1) {
-                    for (int k = 0; k < size; k++) {
-                        clrs.erase(graph[i][k]);
-                        clrs.erase(graph[j][k]);
+                    set<int> available_colors = default_colors;
+                    for (int k = 0; k < graph.size(); k++) {
+                        available_colors.erase(graph[i][k]);
+                        available_colors.erase(graph[j][k]);
+                        steps++;
                     }
-                    graph[i][j] = *clrs.begin();
-                    graph[j][i] = *clrs.begin();
+                    if (available_colors.empty()) {
+                        graph.clear();
+                        return graph; // возвращает пустой граф, если не может раскрасить
+                    }
+                    graph[i][j] = *available_colors.begin();
+                    graph[j][i] = *available_colors.begin();
                 }
             }
         }
@@ -55,19 +46,88 @@ public:
         return graph;
     }
 
+    int get_steps() {
+        return steps;
+    }
+
+    void print_matrix() {
+        for (auto e: graph) {
+            for (auto v: e) {
+                cout << v << " ";
+            }
+            cout << endl;
+        }
+    }
+};
+
+class Tester {
+public:
+    Tester() = default;
+
+    static bool check_correctness(vector<vector<int>> graph) {
+        for (int i = 0; i < graph.size(); i++) {
+            set<int> colors_in_row;
+            set<int> colors_in_col;
+            for (int j = 0; j < graph.size(); j++) {
+                if (graph[i][j] != 0) {
+                    if (colors_in_row.find(graph[i][j]) == colors_in_row.end() && graph[i][j] != 1) {
+                        colors_in_row.insert(graph[i][j]);
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                if (graph[j][i] != 0) {
+                    if (colors_in_col.find(graph[j][i]) == colors_in_col.end() && graph[j][i] != 1) {
+                        colors_in_col.insert(graph[j][i]);
+                    }
+                    else {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    static void time_test(int matrix_size, int probability) {
+        auto graph = Tester::generate_graph(matrix_size, probability);
+        Solver solver = Solver(graph, graph.size());
+
+        clock_t time_begin = clock();
+        solver.solve();
+        clock_t time_end = clock();
+        double final_time = (double) (time_end - time_begin) / CLOCKS_PER_SEC;
+
+        cout << "Matrix size: " << matrix_size << ", Density: " << probability << ", Steps: " << solver.get_steps() << ", Time: " << final_time
+             << ", Time/Steps: " << final_time / solver.get_steps() << endl;
+    }
+
+    static vector<vector<int>> generate_graph(int matrix_size, int probability) {
+        srand(time(nullptr));
+        vector<vector<int> > graph(vector<vector<int> >(matrix_size, vector<int>(matrix_size, 0)));
+
+        for (int i = 1; i < matrix_size; i++) {
+            for (int j = 0; j < i; j++) {
+                if (rand() % 101 <= probability) {
+                    graph[i][j] = 1;
+                    graph[j][i] = 1;
+                }
+            }
+        }
+
+        return graph;
+    }
 };
 
 int main() {
-    ifstream input("in.txt");
-    int n = 0;
-    input >> n;
-    vector<vector<int> > gr(vector<vector<int> >(n, vector<int>(n, 0)));
 
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            input >> gr[i][j];
-        }
-    }
+    Tester::time_test(100, 90);
+    Tester::time_test(200, 90);
+    Tester::time_test(300, 90);
+    Tester::time_test(400, 90);
+    Tester::time_test(500, 90);
 
     return 0;
 }
