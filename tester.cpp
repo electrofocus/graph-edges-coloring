@@ -31,22 +31,24 @@ bool Tester::check_correctness(vector<vector<int>> graph) {
     return true;
 }
 
-void Tester::time_test(int matrix_size, int probability) {
-    auto graph = Tester::generate_graph(matrix_size, probability);
+vector<vector<int>> Tester::time_test(int matrix_size, int probability) {
+    auto graph = Tester::generate_matrix(matrix_size, probability);
     Solver solver = Solver(graph, graph.size());
 
     clock_t time_begin = clock();
-    solver.solve();
+    auto colored_graph = solver.solve();
     clock_t time_end = clock();
     double final_time = (double) (time_end - time_begin) / CLOCKS_PER_SEC;
 
-    cout << "Matrix size: " << matrix_size << ", Density: " << probability << ", Steps: " << solver.get_steps() << ", Time: " << final_time
-         << ", Time/Steps: " << final_time / solver.get_steps() << endl;
+    cout << "Matrix size: " << matrix_size << ", Density: " << probability << ", Steps: " << solver.get_steps()
+         << ", Time: " << final_time << ", Time/Steps: " << final_time / solver.get_steps() << endl;
+
+    return colored_graph;
 }
 
-vector<vector<int>> Tester::generate_graph(int matrix_size, int probability) {
+vector<vector<int>> Tester::generate_matrix(int matrix_size, int probability) {
     srand(time(nullptr));
-    vector<vector<int> > graph(vector<vector<int> >(matrix_size, vector<int>(matrix_size, 0)));
+    vector<vector<int>> graph(vector<vector<int>>(matrix_size, vector<int>(matrix_size, 0)));
 
     for (int i = 1; i < matrix_size; i++) {
         for (int j = 0; j < i; j++) {

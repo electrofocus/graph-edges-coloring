@@ -11,9 +11,9 @@ public:
 
     static bool check_correctness(vector<vector<int>> graph);
 
-    static void time_test(int matrix_size, int probability);
+    static vector<vector<int>> time_test(int matrix_size, int probability);
 
-    static vector<vector<int>> generate_graph(int matrix_size, int probability);
+    static vector<vector<int>> generate_matrix(int matrix_size, int probability);
 };
 
 
