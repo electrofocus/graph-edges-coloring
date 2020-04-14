@@ -3,4 +3,4 @@ project(Camola)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(Camola main.cpp)
+add_executable(Camola main.cpp solver.cpp solver.h tester.cpp tester.h)
