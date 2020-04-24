@@ -1,6 +1,10 @@
 #include "tester.h"
 
 bool Tester::check_correctness(vector<vector<int>> graph) {
+    if (graph.empty()) {
+        return false;
+    }
+
     for (int i = 0; i < graph.size(); i++) {
         set<int> colors_in_row;
         set<int> colors_in_col;
@@ -35,6 +39,13 @@ vector<vector<int>> Tester::time_test(int matrix_size, int probability) {
     auto colored_graph = solver.solve();
     clock_t time_end = clock();
     double final_time = (double) (time_end - time_begin) / CLOCKS_PER_SEC;
+
+    if (check_correctness(colored_graph)) {
+        cout << "> Colored correct, ";
+    }
+    else {
+        cout << "> Colored incorrect, ";
+    }
 
     cout << "Matrix size: " << matrix_size << ", Density: " << probability << ", Steps: " << solver.get_steps()
          << ", Predicted steps:" << ((float)(matrix_size * matrix_size * matrix_size) / 2) * (float)probability * 0.01
