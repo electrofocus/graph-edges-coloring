@@ -1,7 +1,3 @@
-//
-// Created by Amir on 14-Apr-20.
-//
-
 #include "tester.h"
 
 bool Tester::check_correctness(vector<vector<int>> graph) {
@@ -33,7 +29,7 @@ bool Tester::check_correctness(vector<vector<int>> graph) {
 
 vector<vector<int>> Tester::time_test(int matrix_size, int probability) {
     auto graph = Tester::generate_matrix(matrix_size, probability);
-    Solver solver = Solver(graph, graph.size());
+    Solver solver = Solver(graph, graph.size() * 2);
 
     clock_t time_begin = clock();
     auto colored_graph = solver.solve();
@@ -41,6 +37,7 @@ vector<vector<int>> Tester::time_test(int matrix_size, int probability) {
     double final_time = (double) (time_end - time_begin) / CLOCKS_PER_SEC;
 
     cout << "Matrix size: " << matrix_size << ", Density: " << probability << ", Steps: " << solver.get_steps()
+         << ", Predicted steps:" << ((float)(matrix_size * matrix_size * matrix_size) / 2) * (float)probability * 0.01
          << ", Time: " << final_time << ", Time/Steps: " << final_time / solver.get_steps() << endl;
 
     return colored_graph;

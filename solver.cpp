@@ -2,7 +2,7 @@
 
 vector<vector<int>> Solver::solve() {
     for (int i = 0; i < graph.size(); i++) {
-        for (int j = 0; j < graph.size(); j++) {
+        for (int j = 0; j < i; j++) {
             if (graph[i][j] == 1) {
                 set<int> available_colors = default_colors;
                 for (int k = 0; k < graph.size(); k++) {
