@@ -41,15 +41,15 @@ vector<vector<int>> Tester::time_test(int matrix_size, int probability) {
     double final_time = (double) (time_end - time_begin) / CLOCKS_PER_SEC;
 
     if (check_correctness(colored_graph)) {
-        cout << "> Colored correct, ";
+        cout << "> Correct, ";
     }
     else {
-        cout << "> Colored incorrect, ";
+        cout << "> Incorrect, ";
     }
 
-    cout << "Matrix size: " << matrix_size << ", Density: " << probability << ", Steps: " << solver.get_steps()
-         << ", Predicted steps:" << ((float)(matrix_size * matrix_size * matrix_size) / 2) * (float)probability * 0.01
-         << ", Time: " << final_time << ", Time/Steps: " << final_time / solver.get_steps() << endl;
+    cout << "Matrix size:" << matrix_size << ", Density:" << probability << ", Steps:" << solver.get_steps()
+         << ", Predicted steps:" << ((float) (matrix_size * matrix_size * matrix_size) / 2) * (float) probability * 0.01
+         << ", Time:" << final_time << ", Time/Steps:" << final_time / solver.get_steps() << endl;
 
     return colored_graph;
 }

@@ -12,16 +12,16 @@ class Solver {
 private:
     vector<vector<int>> graph;
     int steps;
-    set<int> default_colors;
+    int colors_num;
+    bool *colors;
 
 public:
     explicit Solver(vector<vector<int>> g, int colors_num) {
         graph = g;
         steps = 0;
 
-        for (int i = 2; i < colors_num + 2; i++) {
-            default_colors.insert(i);
-        }
+        this->colors_num = colors_num;
+        colors = new bool[colors_num];
     }
 
     vector<vector<int>> solve();
